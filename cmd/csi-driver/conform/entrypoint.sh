@@ -14,10 +14,13 @@ done
 if [ "$nodeservice" = true ]; then
     # Copy HPE Storage Node Conformance checks and conf in place
     cp -f "/opt/hpe-storage/lib/hpe-storage-node.service" \
-      /lib/systemd/system/hpe-storage-node.service
+      /etc/systemd/system/hpe-storage-node.service
+    if [ ! -e /opt_local/hpe-storage ]; then
+      mkdir -p /opt_local/hpe-storage
+    fi
     cp -f "/opt/hpe-storage/lib/hpe-storage-node.sh" \
-      /usr_local/local/bin/hpe-storage-node.sh
-    chmod +x /usr_local/local/bin/hpe-storage-node.sh
+      /opt_local/hpe-storage/hpe-storage-node.sh
+    chmod +x /opt_local/hpe-storage/hpe-storage-node.sh
 
     echo "running node conformance checks..."
     # Reload and run!
@@ -27,8 +30,8 @@ if [ "$nodeservice" = true ]; then
     # Copy HPE Log Collector diag script
     echo "copying hpe log collector diag script"
     cp -f "/opt/hpe-storage/bin/hpe-logcollector.sh" \
-        /usr_local/local/bin/hpe-logcollector.sh
-    chmod +x  /usr_local/local/bin/hpe-logcollector.sh
+        /opt_local/hpe-storage/hpe-logcollector.sh
+    chmod +x  /opt_local/hpe-storage/hpe-logcollector.sh
 fi
 
 echo "starting csi plugin..."

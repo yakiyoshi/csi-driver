@@ -12,9 +12,13 @@ exit_on_error() {
 if [ -f /etc/os-release ]; then
     os_name=$(cat /etc/os-release | egrep "^NAME=" | awk -F"NAME=" '{print $2}')
     echo "os name obtained as $os_name"
-    echo $os_name | egrep -i "Red Hat|CentOS" >> /dev/null 2>&1
+    echo $os_name | egrep -i "Red Hat Enterprise Linux Server|CentOS" >> /dev/null 2>&1
     if [ $? -eq 0 ]; then
         CONFORM_TO=redhat
+    fi
+    echo $os_name | egrep -i "Red Hat Enterprise Linux CoreOS" >> /dev/null 2>&1
+    if [ $? -eq 0 ]; then
+        CONFORM_TO=coreos
     fi
     echo $os_name | egrep -i "Ubuntu|Debian" >> /dev/null 2>&1
     if [ $? -eq 0 ]; then
@@ -50,6 +54,8 @@ elif [ "$CONFORM_TO" = "redhat" ]; then
         # exit with error to trigger restart of pod to mount newly installed iscisadm
         exit 1
     fi
+elif [ "$CONFORM_TO" = "coreos" ]; then
+    echo "SCSI and multipath packages are already pre-installed in CoreOS"
 else
     echo "unsupported configuration for node package checks. os $os_name"
     exit 1
